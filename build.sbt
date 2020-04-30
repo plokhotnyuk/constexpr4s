@@ -26,16 +26,19 @@ lazy val commonSettings = Seq(
     "-target:jvm-1.8",
     "-feature",
     "-unchecked",
-    "-Ywarn-dead-code",
-    "-Xlint",
-    "-Xmacro-settings:print-expr-results"
   ) ++ (CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, x)) if x == 11 => Seq(
       "-Ybackend:GenBCode",
       "-Ydelambdafy:inline"
     )
     case _ => Seq()
-  }),
+  }) ++ { if (isDotty.value) Seq(
+    "-language:implicitConversions"
+  ) else Seq(
+    "-Ywarn-dead-code",
+    "-Xlint",
+    "-Xmacro-settings:print-expr-results"
+  ) },
   testOptions in Test += Tests.Argument("-oDF"),
   publishTo := sonatypePublishToBundle.value,
   sonatypeProfileName := "com.github.plokhotnyuk",
@@ -75,9 +78,13 @@ lazy val `expression-evaluator` = project.in(file("."))
   .settings(commonSettings)
   .settings(publishSettings)
   .settings(
-    crossScalaVersions := Seq("2.13.2", "2.12.11", "2.11.12"),
+    crossScalaVersions := Seq("0.22.0-RC1", "2.13.2", "2.12.11", "2.11.12"),
     libraryDependencies ++= Seq(
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value,
       "org.scalatest" %% "scalatest" % "3.1.1" % Test
-    )
+    ) ++ {
+      if (isDotty.value) Seq()
+      else Seq("org.scala-lang" % "scala-reflect" % scalaVersion.value)
+    },
+    Compile / unmanagedSourceDirectories +=
+      (ThisBuild / baseDirectory).value / "src" / "main" / { if (isDotty.value) "scala-3" else "scala-2" }
   )
