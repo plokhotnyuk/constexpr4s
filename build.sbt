@@ -18,7 +18,7 @@ lazy val commonSettings = Seq(
     )
   ),
   resolvers += Resolver.sonatypeRepo("staging"),
-  scalaVersion := "2.13.5",
+  scalaVersion := "2.13.6",
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
   scalacOptions ++= Seq(
     "-deprecation",
@@ -76,7 +76,7 @@ lazy val `expression-evaluator` = project.in(file("."))
   .settings(commonSettings)
   .settings(publishSettings)
   .settings(
-    crossScalaVersions := Seq("2.13.5", "2.12.13", "2.13.5"),
+    crossScalaVersions := Seq("2.13.6", "2.12.13", "2.13.5"),
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
       "org.scalatest" %% "scalatest" % "3.2.9" % Test
